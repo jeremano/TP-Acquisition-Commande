@@ -34,6 +34,16 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define UART_TX_BUFFER_SIZE 64
+#define UART_RX_BUFFER_SIZE 1
+#define CMD_BUFFER_SIZE 64
+#define MAX_ARGS 9
+// LF = line feed, saut de ligne
+#define ASCII_LF 0x0A
+// CR = carriage return, retour chariot
+#define ASCII_CR 0x0D
+// DEL = delete
+#define ASCII_DEL 0x7F
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,13 +54,23 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint8_t prompt[]="user@Nucleo-STM32G431>>";
+uint8_t started[]=
+		"\r\n*-----------------------------*"
+		"\r\n| Welcome on Nucleo-STM32G431 |"
+		"\r\n*-----------------------------*"
+		"\r\n";
+uint8_t newline[]="\r\n";
+uint8_t cmdNotFound[]="Command not found\r\n";
+uint32_t uartRxReceived;
+uint8_t uartRxBuffer[UART_RX_BUFFER_SIZE];
+uint8_t uartTxBuffer[UART_TX_BUFFER_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-p;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -65,7 +85,12 @@ p;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	char	 	cmdBuffer[CMD_BUFFER_SIZE];
+	int 		idx_cmd;
+	char* 		argv[MAX_ARGS];
+	int		 	argc = 0;
+	char*		token;
+	int 		newCmdReady = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -89,13 +114,72 @@ int main(void)
   MX_TIM1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  memset(argv,NULL,MAX_ARGS*sizeof(char*));
+  memset(cmdBuffer,NULL,CMD_BUFFER_SIZE*sizeof(char));
+  memset(uartRxBuffer,NULL,UART_RX_BUFFER_SIZE*sizeof(char));
+  memset(uartTxBuffer,NULL,UART_TX_BUFFER_SIZE*sizeof(char));
 
+  HAL_UART_Receive_IT(&huart2, uartRxBuffer, UART_RX_BUFFER_SIZE);
+  HAL_Delay(10);
+  HAL_UART_Transmit(&huart2, started, sizeof(started), HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // uartRxReceived is set to 1 when a new character is received on uart 1
+	  	  if(uartRxReceived){
+	  		  switch(uartRxBuffer[0]){
+	  		  // Nouvelle ligne, instruction à traiter
+	  		  case ASCII_CR:
+	  			  HAL_UART_Transmit(&huart2, newline, sizeof(newline), HAL_MAX_DELAY);
+	  			  cmdBuffer[idx_cmd] = '\0';
+	  			  argc = 0;
+	  			  token = strtok(cmdBuffer, " ");
+	  			  while(token!=NULL){
+	  				  argv[argc++] = token;
+	  				  token = strtok(NULL, " ");
+	  			  }
+
+	  			  idx_cmd = 0;
+	  			  newCmdReady = 1;
+	  			  break;
+	  		  // Suppression du dernier caractère
+	  		  case ASCII_DEL:
+	  			  cmdBuffer[idx_cmd--] = '\0';
+	  			  HAL_UART_Transmit(&huart2, uartRxBuffer, UART_RX_BUFFER_SIZE, HAL_MAX_DELAY);
+	  			  break;
+	  	      // Nouveau caractère
+	  		  default:
+	  			  cmdBuffer[idx_cmd++] = uartRxBuffer[0];
+	  			  HAL_UART_Transmit(&huart2, uartRxBuffer, UART_RX_BUFFER_SIZE, HAL_MAX_DELAY);
+	  		  }
+	  		  uartRxReceived = 0;
+	  	  }
+
+	  	  if(newCmdReady){
+	  		  if(strcmp(argv[0],"set")==0){
+	  			  if(strcmp(argv[1],"PA5")==0){
+	  				  HAL_GPIO_WritePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin, atoi(argv[2]));
+	  				  sprintf(uartTxBuffer,"Switch on/off led : %d\r\n",atoi(argv[2]));
+	  				  HAL_UART_Transmit(&huart2, uartTxBuffer, 32, HAL_MAX_DELAY);
+	  			  }
+	  			  else{
+	  				  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
+	  			  }
+	  		  }
+	  		  else if(strcmp(argv[0],"get")==0)
+	  		  {
+	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
+	  		  }
+	  		  else{
+	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
+	  		  }
+	  			  HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
+	  			  newCmdReady = 0;
+	  	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -150,7 +234,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback (UART_HandleTypeDef * huart){
+	uartRxReceived = 1;
+	HAL_UART_Receive_IT(&huart2, uartRxBuffer, UART_RX_BUFFER_SIZE);
+}
 /* USER CODE END 4 */
 
 /**

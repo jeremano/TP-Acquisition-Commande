@@ -68,10 +68,10 @@ uint32_t uartRxReceived;
 uint8_t uartRxBuffer[UART_RX_BUFFER_SIZE];
 uint8_t uartTxBuffer[UART_TX_BUFFER_SIZE];
 // Tableaux comparatifs des commandes
-uint8_t helpCMD[4] = "help";
-uint8_t pinoutCMD[6] = "pinout";
-uint8_t startCMD[5] = "start";
-uint8_t stopCMD[4] = "stop";
+uint8_t helpCMD[] = "help";
+uint8_t pinoutCMD[] = "pinout";
+uint8_t startCMD[] = "start";
+uint8_t stopCMD[] = "stop";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -180,6 +180,10 @@ int main(void)
 	  		  else if(strcmp(argv[0],"get")==0)
 	  		  {
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
+	  		  }
+	  		  else if(strcmp(argv[0],helpCMD)==0)
+	  		  {
+	  			  HAL_UART_Transmit(&huart2, "ca marche\r\n", sizeof("ca marche\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);

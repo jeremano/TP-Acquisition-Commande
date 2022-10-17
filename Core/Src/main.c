@@ -18,11 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-<<<<<<< Updated upstream
-=======
 #include "tim.h"
 #include "usart.h"
->>>>>>> Stashed changes
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/

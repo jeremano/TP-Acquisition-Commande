@@ -44,6 +44,8 @@
 #define ASCII_CR 0x0D
 // DEL = delete
 #define ASCII_DEL 0x7F
+
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -65,6 +67,11 @@ uint8_t cmdNotFound[]="Command not found\r\n";
 uint32_t uartRxReceived;
 uint8_t uartRxBuffer[UART_RX_BUFFER_SIZE];
 uint8_t uartTxBuffer[UART_TX_BUFFER_SIZE];
+// Tableaux comparatifs des commandes
+uint8_t helpCMD[4] = "help";
+uint8_t pinoutCMD[6] = "pinout";
+uint8_t startCMD[5] = "start";
+uint8_t stopCMD[4] = "stop";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

@@ -197,9 +197,11 @@ int main(void)
 	  		  {
 	  			  HAL_UART_Transmit(&huart2, "pin out\r\n", sizeof("pin out\r\n"), HAL_MAX_DELAY);
 	  		  }
-	  		  else if(strcmp(argv[0],alphaCDM)==0)
+	  		  else if(strcmp(argv[0],alphaCMD)==0)
 	  		  {
-	  			  HAL_UART_Transmit(&huart2, "pin out\r\n", sizeof("pin out\r\n"), HAL_MAX_DELAY);
+	  			  TIM1->CCR1 = (int)((5325*(atoi(argv[1]))/100));
+	  			  TIM1->CCR2 = (int)((5325*((100 - (atoi(argv[1]))))/100));
+	  			  TIM1->CNT=0;
 	  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);

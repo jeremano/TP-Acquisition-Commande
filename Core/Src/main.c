@@ -72,6 +72,7 @@ uint8_t helpCMD[] = "help";
 uint8_t pinoutCMD[] = "pinout";
 uint8_t startCMD[] = "start";
 uint8_t stopCMD[] = "stop";
+uint8_t alphaCMD[] = "alpha";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -136,6 +137,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -192,6 +194,10 @@ int main(void)
 	  			  HAL_UART_Transmit(&huart2, "ca marche\r\n", sizeof("ca marche\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		  else if(strcmp(argv[0],pinoutCMD)==0)
+	  		  {
+	  			  HAL_UART_Transmit(&huart2, "pin out\r\n", sizeof("pin out\r\n"), HAL_MAX_DELAY);
+	  		  }
+	  		  else if(strcmp(argv[0],alphaCDM)==0)
 	  		  {
 	  			  HAL_UART_Transmit(&huart2, "pin out\r\n", sizeof("pin out\r\n"), HAL_MAX_DELAY);
 	  		  }

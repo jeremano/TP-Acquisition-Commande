@@ -185,6 +185,10 @@ int main(void)
 	  		  {
 	  			  HAL_UART_Transmit(&huart2, "ca marche\r\n", sizeof("ca marche\r\n"), HAL_MAX_DELAY);
 	  		  }
+	  		  else if(strcmp(argv[0],pinoutCMD)==0)
+	  		  {
+	  			  HAL_UART_Transmit(&huart2, "pin out\r\n", sizeof("pin out\r\n"), HAL_MAX_DELAY);
+	  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
 	  		  }

@@ -73,6 +73,7 @@ uint8_t pinoutCMD[] = "pinout";
 uint8_t startCMD[] = "start";
 uint8_t stopCMD[] = "stop";
 uint8_t alphaCMD[] = "alpha";
+uint8_t IsoReset[] = "isoreset";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,10 +133,6 @@ int main(void)
   HAL_UART_Transmit(&huart2, started, sizeof(started), HAL_MAX_DELAY);
   HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
 
 
   /* USER CODE END 2 */
@@ -191,17 +188,58 @@ int main(void)
 	  		  }
 	  		  else if(strcmp(argv[0],helpCMD)==0)
 	  		  {
-	  			  HAL_UART_Transmit(&huart2, "ca marche\r\n", sizeof("ca marche\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "List of commands:\r\n", sizeof("List of commands:\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	help\r\n", sizeof("	help\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Displays the list of commands\r\n", sizeof("	-> Displays the list of commands\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	set PA5 (0 or 1)\r\n", sizeof("	set PA5 (0 or 1)\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Turns the LED on or off\r\n", sizeof("	-> Turns the LED on or off\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	pinout\r\n", sizeof("	pinout\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Displays the list of used PINs and their uses\r\n", sizeof("	-> Displays the list of used PINs and their uses\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	start\r\n", sizeof("	start\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Starts the generation of PWMs\r\n", sizeof("	-> Starts the generation of PWMs\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	stop\r\n", sizeof("	stop\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Stops the generation of PWMs\r\n", sizeof("	-> Stops the generation of PWMs\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	alpha [0;1]\r\n", sizeof("	alpha [0;1]\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Changes the value of the Alpha duty cycle between 0 and 1\r\n", sizeof("	-> Changes the value of the Alpha duty cycle between 0 and 1\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	isoreset\r\n", sizeof("	isoreset\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	-> Reset the system\r\n", sizeof("	-> Reset the system\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		  else if(strcmp(argv[0],pinoutCMD)==0)
 	  		  {
-	  			  HAL_UART_Transmit(&huart2, "pin out\r\n", sizeof("pin out\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "list of PINs used :\r\n", sizeof("list of PINs used :\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	PA5  : Switch on/off the LED\r\n", sizeof("	PA5  : Switch on/off the LED\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	PA8  : PWM 1\r\n", sizeof("	PA8  : PWM 1\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	PA9  : PWM 2\r\n", sizeof("	PA9  : PWM 2\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	PA11 : PWM 1N\r\n", sizeof("	PA11 : PWM 1N\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	PA12 : PWM 2N\r\n", sizeof("	PA12 : PWM 2N\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "	PC3  : IsoReset\r\n", sizeof("	PC3  : IsoReset\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		  else if(strcmp(argv[0],alphaCMD)==0)
 	  		  {
 	  			  TIM1->CCR1 = (int)((5325*(atoi(argv[1]))/100));
 	  			  TIM1->CCR2 = (int)((5325*((100 - (atoi(argv[1]))))/100));
 	  			  TIM1->CNT=0;
+
+	  		  }
+	  		  else if(strcmp(argv[0],startCMD)==0)
+	  		  {
+	  			  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	  			  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+	  			  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	  			  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+	  			  HAL_UART_Transmit(&huart2, "The PWMs have been generated\r\n", sizeof("The PWMs have been generated\r\n"), HAL_MAX_DELAY);
+	  		  }
+	  		  else if(strcmp(argv[0],stopCMD)==0)
+	  		  {
+	  			  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+	  			  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+	  			  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	  			  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+	  			  HAL_UART_Transmit(&huart2, "The PWMs have been stopped\r\n", sizeof("The PWMs have been stopped\r\n"), HAL_MAX_DELAY);
+	  		  }
+	  		 else if(strcmp(argv[0],IsoReset)==0)
+	  		  {
+	  			  HAL_UART_Transmit(&huart2, "IsoReset\r\n", sizeof("IsoReset\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);

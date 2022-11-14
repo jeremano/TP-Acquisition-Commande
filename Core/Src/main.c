@@ -253,6 +253,23 @@ int main(void)
 	  			  HAL_UART_Transmit(&huart2, "IsoReset done!\r\n", sizeof("IsoReset done!\r\n"), HAL_MAX_DELAY);
 	  		  }
 
+	  		 else if(strcmp(argv[0],"speed")==0){
+	  			  if(strcmp(argv[1],"=")==0){
+	  				  int speed = atoi(argv[2]);
+	  				  	  if (speed > 0){
+	  				  		  if (speed > 1500){
+	  				  			  speed = 1500;
+	  				  		  }
+	  				  	  }
+	  				  	  if (speed < 0){
+	  				  		  if (speed < -1500){
+	  				  			  speed = -1500;
+	  				  		  }
+	  				  	  }
+	  				  sprintf(uartTxBuffer,"Speed will be set to %d RPM \r\n",speed);
+	  				  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
+	  			  }
+	  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
 	  		  }

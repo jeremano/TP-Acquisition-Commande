@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -74,6 +75,7 @@ uint8_t startCMD[] = "start";
 uint8_t stopCMD[] = "stop";
 uint8_t alphaCMD[] = "alpha";
 uint8_t IsoReset[] = "isoreset";
+uint8_t ADC[] = "ADC";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -122,6 +124,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   memset(argv,NULL,MAX_ARGS*sizeof(char*));
   memset(cmdBuffer,NULL,CMD_BUFFER_SIZE*sizeof(char));
@@ -258,19 +261,20 @@ int main(void)
 	  			  if(strcmp(argv[1],"=")==0){
 	  				  int speed = atoi(argv[2]);
 	  				  	  if (speed > 0){
-	  				  		  if (speed > 1500){
-	  				  			  speed = 1500;
+	  				  		  if (speed > 3000){
+	  				  			  speed = 3000;
 	  				  		  }
 	  				  	  }
 	  				  	  if (speed < 0){
-	  				  		  if (speed < -1500){
-	  				  			  speed = -1500;
+	  				  		  if (speed < -3000){
+	  				  			  speed = -3000;
 	  				  		  }
 	  				  	  }
 	  				  sprintf(uartTxBuffer,"Speed will be set to %d RPM \r\n",speed);
 	  				  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
 	  			  }
 	  		  }
+
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
 	  		  }

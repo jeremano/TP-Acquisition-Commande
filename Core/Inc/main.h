@@ -62,6 +62,8 @@ void Error_Handler(void);
 #define BLUE_BUTTON_EXTI_IRQn EXTI15_10_IRQn
 #define ISO_RESET_Pin GPIO_PIN_3
 #define ISO_RESET_GPIO_Port GPIOC
+#define ADC1_Pin GPIO_PIN_0
+#define ADC1_GPIO_Port GPIOA
 #define GREEN_LED_Pin GPIO_PIN_5
 #define GREEN_LED_GPIO_Port GPIOA
 #define T_SWDIO_Pin GPIO_PIN_13

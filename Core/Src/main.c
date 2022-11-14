@@ -239,8 +239,13 @@ int main(void)
 	  		  }
 	  		 else if(strcmp(argv[0],IsoReset)==0)
 	  		  {
-	  			  HAL_UART_Transmit(&huart2, "IsoReset\r\n", sizeof("IsoReset\r\n"), HAL_MAX_DELAY);
+	  			  HAL_UART_Transmit(&huart2, "IsoReset in progress!\r\n", sizeof("IsoReset in progress!\r\n"), HAL_MAX_DELAY);
+	  			  HAL_GPIO_WritePin(ISO_RESET_GPIO_Port, ISO_RESET_Pin, 1);
+	  			  HAL_Delay(3000);
+	  			  HAL_GPIO_WritePin(ISO_RESET_GPIO_Port, ISO_RESET_Pin, 0);
+	  			  HAL_UART_Transmit(&huart2, "IsoReset done!\r\n", sizeof("IsoReset done!\r\n"), HAL_MAX_DELAY);
 	  		  }
+
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
 	  		  }

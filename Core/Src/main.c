@@ -142,6 +142,13 @@ int main(void)
   while (1)
   {
 	  // uartRxReceived is set to 1 when a new character is received on uart 1
+	  if(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1)
+	  {
+		  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+		  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+		  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+		  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+	  }
 	  	  if(uartRxReceived){
 	  		  switch(uartRxBuffer[0]){
 	  		  // Nouvelle ligne, instruction à traiter

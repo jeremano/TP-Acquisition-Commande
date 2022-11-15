@@ -1,8 +1,8 @@
 # TP-Acquisition-Commande
 
-Functions Done :
-  -help
-  -pinout
+Functions Done :;
+  -help;
+  -pinout;
   -alpha [0;100]
   -isoreset
   -start

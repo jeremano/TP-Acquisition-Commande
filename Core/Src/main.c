@@ -78,6 +78,7 @@ uint8_t alphaCMD[] = "alpha";
 uint8_t IsoReset[] = "isoreset";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
+int DAT[10];
 
 extern DMAConvTerm;
 /* USER CODE END PV */
@@ -144,7 +145,8 @@ int main(void)
   HAL_UART_Transmit(&huart2, started, sizeof(started), HAL_MAX_DELAY);
   HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 
-  HAL_ADC_Start_DMA(&hadc1, 0, 1);
+  HAL_ADCEx_Calibration_Start(&hadc1, 0);
+  HAL_ADC_Start_DMA(&hadc1, DAT, 1);
 
 int etat = 0;
 
@@ -319,7 +321,7 @@ int etat = 0;
 	  	  {
 	  		  DMAConvTerm = 0;
 	  		  NbConv++;
-	  		  int DAT[10];
+
 	  		  //HAL_ADC_Start_DMA(&hadc1, DAT, 8);
 	  	  }
     /* USER CODE END WHILE */

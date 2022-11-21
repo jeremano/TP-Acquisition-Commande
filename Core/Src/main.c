@@ -88,7 +88,7 @@ int ConvAlpha(int vitesse);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 ConvAlpha(int vitesse){
-	int ValAlpha = ((vitesse+3000)/60)-50;
+	int ValAlpha = ((vitesse + 3000)/60);
 	return ValAlpha;
 }
 /* USER CODE END 0 */

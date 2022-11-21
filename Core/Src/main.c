@@ -325,13 +325,6 @@ int etat = 0;
 	  			  HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 	  			  newCmdReady = 0;
 	  	  }
-	  	  if(DMAConvTerm == 1)
-	  	  {
-	  		  DMAConvTerm = 0;
-	  		  NbConv++;
-
-	  		  //HAL_ADC_Start_DMA(&hadc1, DAT, 8);
-	  	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

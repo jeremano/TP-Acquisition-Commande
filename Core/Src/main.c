@@ -302,7 +302,7 @@ int etat = 0;
 
 
 	  		  }
-	  		  else if(strcmp(argv[0],"Conv")==0)
+	  		  else if(strcmp(argv[0],"conv")==0)
 	  			  		  {
 	  			  	  	  	  sprintf(uartTxBuffer,"Nb de conversion DMA = %d \r\n",NbConv);
 	  			  			  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);

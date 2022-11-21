@@ -275,8 +275,7 @@ int etat = 0;
 	  		  }
 
 	  		 else if(strcmp(argv[0],"speed")==0){
-	  			  if(strcmp(argv[1],"=")==0){
-	  				  int speed = atoi(argv[2]);
+	  				  int speed = atoi(argv[1]);
 	  				  	  if (speed > 0){
 	  				  		  if (speed > 3000){
 	  				  			  speed = 3000;
@@ -289,11 +288,16 @@ int etat = 0;
 	  				  	  }
 	  				  sprintf(uartTxBuffer,"Speed will be set to %d RPM \r\n",speed);
 	  				  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
+	  				  HAL_Delay(10);
 	  				  int NewAlpha = ConvAlpha(speed);
+	  				  sprintf(uartTxBuffer,"Alpha = %d\r\n",NewAlpha);
+	  				  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
 	  				  TIM1->CCR1 = (int)((5325*(NewAlpha)/100));
 	  				  TIM1->CCR2 = (int)((5325*((100 - (NewAlpha)))/100));
 	  				  TIM1->CNT=0;
-	  			  }
+
+
+
 	  		  }
 
 	  		  else{

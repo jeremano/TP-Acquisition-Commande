@@ -313,7 +313,7 @@ int etat = 0;
 	  			  HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 	  			  newCmdReady = 0;
 	  	  }
-	  	  if(DMAConvTerm = 1)
+	  	  if(DMAConvTerm == 1)
 	  	  {
 	  		  DMAConvTerm = 0;
 	  		  NbConv++;

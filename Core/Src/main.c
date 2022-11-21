@@ -77,6 +77,9 @@ uint8_t stopCMD[] = "stop";
 uint8_t alphaCMD[] = "alpha";
 uint8_t IsoReset[] = "isoreset";
 uint8_t ADC[] = "ADC";
+uint8_t NbConv = 0;
+
+extern DMAConvTerm;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -299,12 +302,21 @@ int etat = 0;
 
 
 	  		  }
-
+	  		  else if(strcmp(argv[0],"Conv")==0)
+	  			  		  {
+	  			  	  	  	  sprintf(uartTxBuffer,"Nb de conversion DMA = %d \r\n",NbConv);
+	  			  			  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
+	  			  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
 	  		  }
 	  			  HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 	  			  newCmdReady = 0;
+	  	  }
+	  	  if(DMAConvTerm = 1)
+	  	  {
+	  		  DMAConvTerm = 0;
+	  		  NbConv++;
 	  	  }
     /* USER CODE END WHILE */
 

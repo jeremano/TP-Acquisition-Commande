@@ -98,6 +98,7 @@ ConvAlpha(int vitesse){
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
+	HAL_ADC_GetValue(&hadc1);
 	NbConv++;
 }
 /* USER CODE END 0 */
@@ -153,6 +154,7 @@ int main(void)
 
   HAL_ADCEx_Calibration_Start(&hadc1, 0);
   HAL_ADC_Start_DMA(&hadc1, DAT, 1);
+  HAL_TIM_Base_Start(&htim2);
 
 int etat = 0;
 

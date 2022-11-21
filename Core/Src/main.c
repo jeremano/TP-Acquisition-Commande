@@ -136,7 +136,7 @@ int main(void)
   HAL_UART_Transmit(&huart2, started, sizeof(started), HAL_MAX_DELAY);
   HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 
-
+  int etat = 0 ;
 
   /* USER CODE END 2 */
 
@@ -147,11 +147,22 @@ int main(void)
 	  // uartRxReceived is set to 1 when a new character is received on uart 1
 	  if(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1)
 	  {
-		  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
-		  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-		  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-		  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-		  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+		  if(etat ==0){
+			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
+			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+			  	  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+			  	  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+			  	  etat = 1;
+		  	  }
+		  else{
+			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
+			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+			  	  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+			  	  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+			  	  etat = 0;
+		  	  }
 	  }
 	  	  if(uartRxReceived){
 	  		  switch(uartRxBuffer[0]){

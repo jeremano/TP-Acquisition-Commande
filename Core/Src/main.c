@@ -143,6 +143,7 @@ int main(void)
   HAL_Delay(10);
   HAL_UART_Transmit(&huart2, started, sizeof(started), HAL_MAX_DELAY);
   HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
+
   HAL_ADC_Start_DMA(&hadc1, 0, 1);
 
 int etat = 0;
@@ -319,7 +320,7 @@ int etat = 0;
 	  		  DMAConvTerm = 0;
 	  		  NbConv++;
 	  		  int DAT[10];
-	  		  HAL_ADC_Start_DMA(&hadc1, DAT, 8);
+	  		  //HAL_ADC_Start_DMA(&hadc1, DAT, 8);
 	  	  }
     /* USER CODE END WHILE */
 

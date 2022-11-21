@@ -95,6 +95,11 @@ ConvAlpha(int vitesse){
 	int ValAlpha = ((vitesse + 3000)/60);
 	return ValAlpha;
 }
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	NbConv++;
+}
 /* USER CODE END 0 */
 
 /**
@@ -382,6 +387,7 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef * huart){
 	uartRxReceived = 1;
 	HAL_UART_Receive_IT(&huart2, uartRxBuffer, UART_RX_BUFFER_SIZE);
 }
+
 /* USER CODE END 4 */
 
 /**

@@ -139,6 +139,7 @@ int main(void)
   MX_TIM1_Init();
   MX_USART2_UART_Init();
   MX_ADC1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   memset(argv,NULL,MAX_ARGS*sizeof(char*));
   memset(cmdBuffer,NULL,CMD_BUFFER_SIZE*sizeof(char));

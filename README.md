@@ -8,6 +8,7 @@ Functions Done :
   -isoreset
   -start
   -stop
+  -speed XXXX [-3000;3000]
 
 Data :
 
@@ -18,8 +19,9 @@ Data :
 
 Work in progress :
 
-  -speed XXXX [-3000;3000]
-  -ADC
+  -ADC (almost finished)
+  -Current's enslavement
+  -Speed's enslavement
 
 How to use it :
 
@@ -30,3 +32,4 @@ How to use it :
   Use the "start" command to start generating PWMs.
   Use the "alpha" command to change the alpha value of PWMs.
   Use the "stop" command to stop the generation of PWMs.
+  Use the "speed" command to set a specific speed.

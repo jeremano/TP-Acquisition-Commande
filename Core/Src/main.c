@@ -79,7 +79,8 @@ uint8_t IsoReset[] = "isoreset";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
 uint8_t Status;
-int DAT[10];
+uint16_t DAT[2];
+uint16_t courant = 0;
 
 extern DMAConvTerm;
 /* USER CODE END PV */
@@ -101,10 +102,11 @@ ConvAlpha(int vitesse){
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	HAL_ADC_GetValue(&hadc1);
 	NbConv++;
+	/*HAL_ADC_GetValue(&hadc1);
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
-	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
+	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);*/
+	courant = (DAT[0]+DAT[1])/2;
 }
 
 void CCRAlpha(int alpha){
@@ -171,8 +173,8 @@ int main(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
-  MX_ADC1_Init();
   MX_TIM2_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
   memset(argv,NULL,MAX_ARGS*sizeof(char*));
   memset(cmdBuffer,NULL,CMD_BUFFER_SIZE*sizeof(char));
@@ -184,9 +186,14 @@ int main(void)
   HAL_UART_Transmit(&huart2, started, sizeof(started), HAL_MAX_DELAY);
   HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
 
-  HAL_ADCEx_Calibration_Start(&hadc1, 0);
-  HAL_ADC_Start_DMA(&hadc1, DAT, 1);
-  HAL_TIM_Base_Start(&htim2);
+  if(HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED)!=HAL_OK){
+	  Error_Handler();
+  }
+
+  if(HAL_ADC_Start_DMA(&hadc2, DAT, 2)!=HAL_OK){
+	  Error_Handler();
+  }
+  HAL_TIM_Base_Start(&htim1);
 
 int etat = 0;
 
@@ -325,7 +332,11 @@ int etat = 0;
 	  		  else if(strcmp(argv[0],"conv")==0)
 	  			  		  {
 	  			  	  	  	  sprintf(uartTxBuffer,"Nb de conversion DMA = %d \r\n",NbConv);
-	  			  			  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
+	  			  			  HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof(uartTxBuffer), HAL_MAX_DELAY);
+	  			  			  HAL_Delay(50);
+	  			  	  	  	  sprintf(uartTxBuffer,"Courant = %d \r\n",courant);
+	  			  			  HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof(uartTxBuffer), HAL_MAX_DELAY);
+	  			  			  HAL_Delay(50);
 	  			  		  }
 	  		  else{
 	  			  HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);

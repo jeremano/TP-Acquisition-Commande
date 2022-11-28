@@ -94,7 +94,7 @@ void CCRAlpha(int alpha);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-ConvAlpha(int vitesse){
+int ConvAlpha(int vitesse){
 	int ValAlpha = ((vitesse + 3000)/60);
 	CCRAlpha(ValAlpha);
 	return ValAlpha;

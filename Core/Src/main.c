@@ -78,6 +78,7 @@ uint8_t alphaCMD[] = "alpha";
 uint8_t IsoReset[] = "isoreset";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
+uint8_t Status;
 int DAT[10];
 
 extern DMAConvTerm;
@@ -107,9 +108,30 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 }
 
 void CCRAlpha(int alpha){
-	  TIM1->CCR1 = (int)((5325*alpha)/100);
-	  TIM1->CCR2 = (int)((5325*(100 - alpha)/100));
-	  TIM1->CNT=0;
+	 TIM1->CCR1 = (int)((5325*alpha)/100);
+	 TIM1->CCR2 = (int)((5325*(100 - alpha)/100));
+	 TIM1->CNT=0;
+}
+
+void PWMStartStop(void)
+{
+	if(Status == 0)
+	{
+		CCRAlpha(50);
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+		HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+		HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+		Status = 1;
+	}
+	else
+	{
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+		HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+		HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+		Status = 0;
+	}
 }
 /* USER CODE END 0 */
 
@@ -176,24 +198,10 @@ int etat = 0;
   {
 	  // uartRxReceived is set to 1 when a new character is received on uart 1
 	  if(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1)
-		  if(etat ==0){
-			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
-			  	  CCRAlpha(50);
-			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-			  	  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-			  	  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-			  	  etat = 1;
-		  	  }
-		  else{
-			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
-			  	  CCRAlpha(50);
-			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-			  	  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
-			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-			  	  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
-			  	  etat = 0;
-		  	  }
+	  {
+		  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
+		  PWMStartStop();
+	  }
 	  	  if(uartRxReceived){
 	  		  switch(uartRxBuffer[0]){
 	  		  // Nouvelle ligne, instruction à traiter
@@ -275,18 +283,14 @@ int etat = 0;
 	  		  }
 	  		  else if(strcmp(argv[0],startCMD)==0)
 	  		  {
-	  			  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	  			  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-	  			  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-	  			  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+	  			  Status = 0;
+	  			  PWMStartStop();
 	  			  HAL_UART_Transmit(&huart2, "The PWMs have been generated\r\n", sizeof("The PWMs have been generated\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		  else if(strcmp(argv[0],stopCMD)==0)
 	  		  {
-	  			  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-	  			  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
-	  			  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
-	  			  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+	  			  Status = 1;
+	  			  PWMStartStop();
 	  			  HAL_UART_Transmit(&huart2, "The PWMs have been stopped\r\n", sizeof("The PWMs have been stopped\r\n"), HAL_MAX_DELAY);
 	  		  }
 	  		 else if(strcmp(argv[0],IsoReset)==0)

@@ -87,12 +87,14 @@ extern DMAConvTerm;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 int ConvAlpha(int vitesse);
+void CCRAlpha(int alpha);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 ConvAlpha(int vitesse){
 	int ValAlpha = ((vitesse + 3000)/60);
+	CCRAlpha(ValAlpha);
 	return ValAlpha;
 }
 
@@ -102,6 +104,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	NbConv++;
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
+}
+
+void CCRAlpha(int alpha){
+	  TIM1->CCR1 = (int)((5325*alpha)/100);
+	  TIM1->CCR2 = (int)((5325*(100 - alpha)/100));
+	  TIM1->CNT=0;
 }
 /* USER CODE END 0 */
 
@@ -170,9 +178,7 @@ int etat = 0;
 	  if(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1)
 		  if(etat ==0){
 			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
-			  	  TIM1->CCR1 = (int)((5325*(50)/100));
-			  	  TIM1->CCR2 = (int)((5325*(50))/100);
-			  	  TIM1->CNT=0;
+			  	  CCRAlpha(50);
 			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
@@ -181,9 +187,7 @@ int etat = 0;
 		  	  }
 		  else{
 			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
-		  	  	  TIM1->CCR1 = (int)((5325*(50)/100));
-		  	  	  TIM1->CCR2 = (int)((5325*(50))/100);
-		  	  	  TIM1->CNT=0;
+			  	  CCRAlpha(50);
 			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
@@ -267,10 +271,7 @@ int etat = 0;
 	  		  }
 	  		  else if(strcmp(argv[0],alphaCMD)==0)
 	  		  {
-	  			  TIM1->CCR1 = (int)((5325*(atoi(argv[1]))/100));
-	  			  TIM1->CCR2 = (int)((5325*((100 - (atoi(argv[1]))))/100));
-	  			  TIM1->CNT=0;
-
+	  			  CCRAlpha(atoi(argv[1]));
 	  		  }
 	  		  else if(strcmp(argv[0],startCMD)==0)
 	  		  {
@@ -315,13 +316,8 @@ int etat = 0;
 	  				  int NewAlpha = ConvAlpha(speed);
 	  				  sprintf(uartTxBuffer,"Alpha = %d\r\n",NewAlpha);
 	  				  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
-	  				  TIM1->CCR1 = (int)((5325*(NewAlpha)/100));
-	  				  TIM1->CCR2 = (int)((5325*((100 - (NewAlpha)))/100));
-	  				  TIM1->CNT=0;
-
-
-
 	  		  }
+
 	  		  else if(strcmp(argv[0],"conv")==0)
 	  			  		  {
 	  			  	  	  	  sprintf(uartTxBuffer,"Nb de conversion DMA = %d \r\n",NbConv);

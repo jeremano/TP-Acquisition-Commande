@@ -100,6 +100,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	HAL_ADC_GetValue(&hadc1);
 	NbConv++;
+	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
+	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
 }
 /* USER CODE END 0 */
 
@@ -168,6 +170,9 @@ int etat = 0;
 	  if(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1)
 		  if(etat ==0){
 			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
+			  	  TIM1->CCR1 = (int)((5325*(50)/100));
+			  	  TIM1->CCR2 = (int)((5325*(50))/100);
+			  	  TIM1->CNT=0;
 			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
@@ -176,6 +181,9 @@ int etat = 0;
 		  	  }
 		  else{
 			  while(HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO_Port, BLUE_BUTTON_Pin) == 1){}
+		  	  	  TIM1->CCR1 = (int)((5325*(50)/100));
+		  	  	  TIM1->CCR2 = (int)((5325*(50))/100);
+		  	  	  TIM1->CNT=0;
 			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
 			  	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);

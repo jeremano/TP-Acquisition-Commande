@@ -90,6 +90,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 int ConvAlpha(int vitesse);
 void CCRAlpha(int alpha);
+void TIMIRQ(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -135,6 +136,12 @@ void PWMStartStop(void)
 		Status = 0;
 	}
 }
+
+void TIMIRQ(void)
+{
+	HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
+	HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
+}
 /* USER CODE END 0 */
 
 /**
@@ -175,6 +182,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   MX_ADC2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 	memset(argv,NULL,MAX_ARGS*sizeof(char*));
 	memset(cmdBuffer,NULL,CMD_BUFFER_SIZE*sizeof(char));

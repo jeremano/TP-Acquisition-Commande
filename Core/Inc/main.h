@@ -64,6 +64,8 @@ void Error_Handler(void);
 #define ISO_RESET_GPIO_Port GPIOC
 #define GREEN_LED_Pin GPIO_PIN_5
 #define GREEN_LED_GPIO_Port GPIOA
+#define Rotary_Pin GPIO_PIN_6
+#define Rotary_GPIO_Port GPIOC
 #define Conv_Pin GPIO_PIN_7
 #define Conv_GPIO_Port GPIOC
 #define T_SWDIO_Pin GPIO_PIN_13

@@ -79,8 +79,8 @@ uint8_t IsoReset[] = "isoreset";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
 uint8_t Status;
-uint16_t DAT[2];
-uint16_t courant = 0;
+uint16_t DAT[20];
+float courant = 0;
 
 extern DMAConvTerm;
 /* USER CODE END PV */
@@ -107,7 +107,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	/*HAL_ADC_GetValue(&hadc1);
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);*/
-	courant = (DAT[0]+DAT[1])/2;
+	float CMoy = 0;
+	for (int i = 0; i < 20; ++i) {
+		CMoy = CMoy + (float)DAT[i];
+	}
+	CMoy = CMoy/20;
+	courant = ((CMoy-2500)-634)*3.5;
 }
 
 void CCRAlpha(int alpha){
@@ -202,7 +207,7 @@ int main(void)
 		Error_Handler();
 	}
 
-	if(HAL_ADC_Start_DMA(&hadc2, DAT, 2)!=HAL_OK)
+	if(HAL_ADC_Start_DMA(&hadc2, DAT, 20)!=HAL_OK)
 	{
 		Error_Handler();
 	}
@@ -350,12 +355,12 @@ int main(void)
 				sprintf(uartTxBuffer,"Alpha = %d\r\n",NewAlpha);
 				HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
 			}
-			else if(strcmp(argv[0],"conv")==0)
+			else if(strcmp(argv[0],"c")==0)
 			{
 				sprintf(uartTxBuffer,"Nb de conversion DMA = %d \r\n",NbConv);
 				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof(uartTxBuffer), HAL_MAX_DELAY);
 				HAL_Delay(50);
-				sprintf(uartTxBuffer,"Courant = %d \r\n",courant);
+				sprintf(uartTxBuffer,"Courant = %f \r\n",courant);
 				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof(uartTxBuffer), HAL_MAX_DELAY);
 				HAL_Delay(50);
 			}

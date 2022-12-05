@@ -47,6 +47,7 @@
 // DEL = delete
 #define ASCII_DEL 0x7F
 
+#define	NbMoy 100
 
 /* USER CODE END PD */
 
@@ -79,7 +80,7 @@ uint8_t IsoReset[] = "isoreset";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
 uint8_t Status;
-uint16_t DAT[20];
+uint16_t DAT[NbMoy];
 float courant = 0;
 
 extern DMAConvTerm;
@@ -108,10 +109,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
 	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);*/
 	float CMoy = 0;
-	for (int i = 0; i < 20; ++i) {
+	for (int i = 0; i < NbMoy; ++i) {
 		CMoy = CMoy + (float)DAT[i];
 	}
-	CMoy = CMoy/20;
+	CMoy = CMoy/NbMoy;
 	courant = ((CMoy-2500)-634)*3.5;
 }
 
@@ -207,7 +208,7 @@ int main(void)
 		Error_Handler();
 	}
 
-	if(HAL_ADC_Start_DMA(&hadc2, DAT, 20)!=HAL_OK)
+	if(HAL_ADC_Start_DMA(&hadc2, DAT, NbMoy)!=HAL_OK)
 	{
 		Error_Handler();
 	}

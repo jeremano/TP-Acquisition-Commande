@@ -82,6 +82,7 @@ uint8_t NbConv = 0;
 uint8_t Status;
 uint16_t DAT[NbMoy];
 float courant = 0;
+float Ticks = 0;
 
 extern DMAConvTerm;
 /* USER CODE END PV */
@@ -113,7 +114,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		CMoy = CMoy + (float)DAT[i];
 	}
 	CMoy = CMoy/NbMoy;
-	courant = ((CMoy-2500)-634)*3.5;
+	courant = ((CMoy-3100)/4096)*(12*3.3)-0.3;
 }
 
 void CCRAlpha(int alpha){
@@ -147,6 +148,8 @@ void TIMIRQ(void)
 {
 	HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
 	HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
+	Ticks = ((((TIM2->CNT)-32767)/0.05)/4096);
+	TIM2->CNT = 32767;
 }
 /* USER CODE END 0 */
 
@@ -358,12 +361,15 @@ int main(void)
 			}
 			else if(strcmp(argv[0],"c")==0)
 			{
-				sprintf(uartTxBuffer,"Nb de conversion DMA = %d \r\n",NbConv);
+				sprintf(uartTxBuffer,"Nb DMA = %0.3d",NbConv);
+				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof("Nb DMA = 123"), HAL_MAX_DELAY);
+				HAL_UART_Transmit(&huart2, "\r\n", sizeof("\r\n"), HAL_MAX_DELAY);
+				sprintf(uartTxBuffer,"Courant = %0.4f",courant);
+				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof("Courant = 12345\r\n"), HAL_MAX_DELAY);
+				HAL_UART_Transmit(&huart2, "\r\n", sizeof("\r\n"), HAL_MAX_DELAY);
+				sprintf(uartTxBuffer,"RoueTour = %f",Ticks);
 				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof(uartTxBuffer), HAL_MAX_DELAY);
-				HAL_Delay(50);
-				sprintf(uartTxBuffer,"Courant = %f \r\n",courant);
-				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof(uartTxBuffer), HAL_MAX_DELAY);
-				HAL_Delay(50);
+				HAL_UART_Transmit(&huart2, "\r\n", sizeof("\r\n"), HAL_MAX_DELAY);
 			}
 			else
 			{

@@ -59,6 +59,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+struct Valeurs
+{
+	int Vitesse;
+	int Alpha;
+	int Courant;
+	int ErreurAngle;
+};
+struct Valeurs NosVal;
 uint8_t prompt[]="user@Nucleo-STM32G431>>";
 uint8_t started[]=
 		"\r\n*-----------------------------*"

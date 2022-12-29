@@ -1,8 +1,8 @@
 # TP-Acquisition-Commande
 ###### Boudet - Manologlou
 
-## Table of contents
-* [Objectifs](#objectifs)
+## Sommaire
+[Objectifs](#objectifs)
 
 ## Objectifs
 Le but de ce TP est d'asservir un moteur à courant continu en courant et en vitesse.

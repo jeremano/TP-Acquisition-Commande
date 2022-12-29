@@ -4,6 +4,10 @@
 ## Sommaire
 [Objectifs](#objectifs)
 
+[Liaison UART](#liaison-uart)
+
+[Prise en main du mmoteur](#prise-en-main-du-moteur)
+
 ## Objectifs
 Le but de ce TP est d'asservir un moteur à courant continu en courant et en vitesse.
 On utilise plusieurs outils :
@@ -13,11 +17,21 @@ On utilise plusieurs outils :
 * Un PCB d'interfaçage entre la carte et le driver
 * Une alimentation réglable allant jusqu'à 48 V
 
-## Prise en main
-On liste tout d'abord les caractéristiques du moteur :
+## Liaison UART
+
+
+## Prise en main du moteur
+Les caractéristiques du moteur :
 * 3000 RPM nominal
 * 48 V
 * 6 A nominal
+Nous allons simplement générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.
+Pour cela, nous utilisons le timer 1 avec la configuration suivante :
+* Screen config
+* Screen paramètres
+* Explications
+
+
 
 ```
 $ cd ../lorem

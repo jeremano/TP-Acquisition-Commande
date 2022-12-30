@@ -18,7 +18,27 @@ On utilise plusieurs outils :
 * Une alimentation réglable allant jusqu'à 48 V
 
 ## Liaison UART
+La console UART doit répondre aux critères suivants :
+* Un echo des caractères envoyés
+* Traite les caractères envoyés après réception du caractère "ENTER"
+* Peut prendre en compte plusieurs chaines de caractères
+* Renvoie le résultat des fonctions appelées
 
+Les fonctions codées :
+* help
+  - Renvoie la liste des commandes disponibles
+* pinout
+  - Renvoie la liste des broches utilisée ainsi que leur fonctionnalité
+* start
+  - Génère les PWM de commande avec un rapport cyclique de 50% (0 RPM)
+* stop
+  - Arrête les PWM, ce qui éteint le moteur
+* alpha [0;100]
+  - Change le rapport cyclique des PWM
+* isoreset
+  - Remet à 0 le driver, pour permettre son démarrage
+* speed [-3000;3000]
+  - Change la vitesse de rotation du moteur
 
 ## Prise en main du moteur
 Les caractéristiques du moteur :

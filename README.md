@@ -1,4 +1,4 @@
-# TP-Acquisition-Commande <br />
+# TP-Acquisition-Commande <br>
 Boudet - Manologlou
 
 ## Sommaire
@@ -73,7 +73,7 @@ code
 expliquation
 
 ## Commande du moteur
-Nous allons tout d'abord générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.<br />
+Nous allons tout d'abord générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.<br>
 Le cahier des charges nous impose les configurations suivantes :
 * Fréquence de la PWM : 16kHz
 * Temps mort minimum : 2us

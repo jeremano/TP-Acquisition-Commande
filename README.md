@@ -10,6 +10,8 @@ Boudet - Manologlou
 
 [Mesure du courant](#mesure-du-courant)
 
+[Mesure de vitesse](#mesure-de-vitesse)
+
 ## Objectifs
 Le but de ce TP est d'asservir un moteur à courant continu en courant et en vitesse.
 On utilise plusieurs outils :
@@ -81,11 +83,32 @@ Pour cela, nous utilisons le timer 1 avec la configuration suivante :
 * Screen config
 * Screen paramètres
 * Explications (calcul du temps mort)
+```
+code init
+```
 * Screen oscillo PWM
 * Screen oscillo temps mort
 * image branchements
 
 ## Mesure du courant
+* Config ADC
+* Config DMA
+```
+Code init
+```
+* Explication calcul moyenne
+```
+Code calcul moyenne
+```
+
+## Mesure de la vitesse
+La mesure de vitesse s'effectue avec le retour d'une roue codeuse. La roue codeuse donne la position, qui est plus précise que la vitesse, et de laquelle nous déduirons la vitesse.
+* Config TIM2
+* Config TIM3
+```
+Code calcul vitesse
+```
+* Expliquation
 
 ## Fonctionnalitées supplémentaires
 Appui bouton bleu

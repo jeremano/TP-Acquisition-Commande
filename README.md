@@ -1,12 +1,14 @@
-# TP-Acquisition-Commande
-###### Boudet - Manologlou
+# TP-Acquisition-Commande <br />
+Boudet - Manologlou
 
 ## Sommaire
 [Objectifs](#objectifs)
 
 [Liaison UART](#liaison-uart)
 
-[Prise en main du mmoteur](#prise-en-main-du-moteur)
+[Commande du moteur](#commande-du-moteur)
+
+[Mesure du courant](#mesure-du-courant)
 
 ## Objectifs
 Le but de ce TP est d'asservir un moteur à courant continu en courant et en vitesse.
@@ -27,31 +29,72 @@ La console UART doit répondre aux critères suivants :
 Les fonctions codées :
 * help
   - Renvoie la liste des commandes disponibles
+```
+code
+```
+expliquation
 * pinout
   - Renvoie la liste des broches utilisée ainsi que leur fonctionnalité
+```
+code
+```
+expliquation
 * start
   - Génère les PWM de commande avec un rapport cyclique de 50% (0 RPM)
+```
+code
+```
+expliquation
 * stop
   - Arrête les PWM, ce qui éteint le moteur
+```
+code
+```
+expliquation
 * alpha [0;100]
   - Change le rapport cyclique des PWM
+```
+code
+```
+expliquation
 * isoreset
   - Remet à 0 le driver, pour permettre son démarrage
+```
+code
+```
+expliquation
 * speed [-3000;3000]
   - Change la vitesse de rotation du moteur
+```
+code
+```
+expliquation
+
+## Commande du moteur
+Nous allons tout d'abord générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.<br />
+Le cahier des charges nous impose les configurations suivantes :
+* Fréquence de la PWM : 16kHz
+* Temps mort minimum : 2us
+* Résolution minimum : 10bits
+
+Pour cela, nous utilisons le timer 1 avec la configuration suivante :
+* Screen config
+* Screen paramètres
+* Explications (calcul du temps mort)
+* Screen oscillo PWM
+* Screen oscillo temps mort
+* image branchements
+
+## Mesure du courant
+
+## Fonctionnalitées supplémentaires
+Appui bouton bleu
 
 ## Prise en main du moteur
 Les caractéristiques du moteur :
 * 3000 RPM nominal
 * 48 V
 * 6 A nominal
-Nous allons simplement générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.
-Pour cela, nous utilisons le timer 1 avec la configuration suivante :
-* Screen config
-* Screen paramètres
-* Explications
-
-
 
 ```
 $ cd ../lorem

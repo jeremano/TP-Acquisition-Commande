@@ -1,32 +1,38 @@
 # TP-Acquisition-Commande <br>
-Boudet - Manologlou
+_Boudet - Manologlou_
 
 ## Sommaire
-[Objectifs](#objectifs)
+[1. Objectifs](#1-objectifs)
 
-[Liaison UART](#liaison-uart)
+[2. Liaison UART](#2-liaison-uart)
 
-[Commande du moteur](#commande-du-moteur)
+[3. Commande du moteur](#3-commande-du-moteur)
 
-[Mesure du courant](#mesure-du-courant)
+[4. Mesure du courant](#4-mesure-du-courant)
 
-[Mesure de vitesse](#mesure-de-vitesse)
+[5. Mesure de la vitesse](#5-mesure-de-la-vitesse)
 
-## Objectifs
+[6. Asservissement](#6-asservissement)
+
+[7. Fonctionnalitées supplémentaires](#7-fonctionnalitées-supplémentaires)
+
+## 1. Objectifs
 Le but de ce TP est d'asservir un moteur à courant continu en courant et en vitesse.
 On utilise plusieurs outils :
-* Un moteur à courant continu
+* Un moteur à courant continu 3000RPM / 6A
 * Un driver de moteur MC1L 3-Phase Microchip
 * Une carte STM32G474RE
 * Un PCB d'interfaçage entre la carte et le driver
-* Une alimentation réglable allant jusqu'à 48 V
+* Une alimentation réglable allant jusqu'à 48V
+<br>
 
-## Liaison UART
+## 2. Liaison UART
 La console UART doit répondre aux critères suivants :
 * Un echo des caractères envoyés
 * Traite les caractères envoyés après réception du caractère "ENTER"
 * Peut prendre en compte plusieurs chaines de caractères
 * Renvoie le résultat des fonctions appelées
+<br>
 
 Les fonctions codées :
 * help
@@ -42,7 +48,7 @@ code
 ```
 expliquation
 * start
-  - Génère les PWM de commande avec un rapport cyclique de 50% (0 RPM)
+  - Génère les PWM de commande avec un rapport cyclique de 50% (0RPM)
 ```
 code
 ```
@@ -71,15 +77,25 @@ expliquation
 code
 ```
 expliquation
+<br>
 
-## Commande du moteur
+## 3. Commande du moteur
 Nous allons tout d'abord générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.<br>
 Le cahier des charges nous impose les configurations suivantes :
 * Fréquence de la PWM : 16kHz
 * Temps mort minimum : 2us
 * Résolution minimum : 10bits
+<br>
 
-Pour cela, nous utilisons le timer 1 avec la configuration suivante :
+La complémentaire décallée permeet d'obtenir une tension auw bornes du moteur qui n'est que positive ou négative, contrairement à la commande complémentaire basique qui crée une alternance positive négative qui crée un appel de courant inutile et freine le moteur. 
+
+* Image commande simple
+* Image complémentaire décallée
+
+Quand le moteur est à l'arret, il reçoit du courant positif et négatif en complémentaire simple. En complémentaire
+<br>
+
+Pour générer la commande, nous utilisons le timer 1 avec la configuration suivante :
 * Screen config
 * Screen paramètres
 * Explications (calcul du temps mort)
@@ -89,8 +105,9 @@ code init
 * Screen oscillo PWM
 * Screen oscillo temps mort
 * image branchements
+<br>
 
-## Mesure du courant
+## 4. Mesure du courant
 * Config ADC
 * Config DMA
 ```
@@ -100,8 +117,9 @@ Code init
 ```
 Code calcul moyenne
 ```
+<br>
 
-## Mesure de la vitesse
+## 5. Mesure de la vitesse
 La mesure de vitesse s'effectue avec le retour d'une roue codeuse. La roue codeuse donne la position, qui est plus précise que la vitesse, et de laquelle nous déduirons la vitesse.
 * Config TIM2
 * Config TIM3
@@ -109,8 +127,12 @@ La mesure de vitesse s'effectue avec le retour d'une roue codeuse. La roue codeu
 Code calcul vitesse
 ```
 * Expliquation
+<br>
 
-## Fonctionnalitées supplémentaires
+## 6. Asservissement
+<br>
+
+## 7. Fonctionnalitées supplémentaires
 Appui bouton bleu
 
 ## Prise en main du moteur

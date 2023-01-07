@@ -46,57 +46,132 @@ Les fonctions codées :
 * help
   - Renvoie la liste des commandes disponibles
 ```
-code
+else if(strcmp(argv[0],helpCMD)==0)
+{
+ HAL_UART_Transmit(&huart2, "List of commands:\r\n", sizeof("List of commands:\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	help\r\n", sizeof("	help\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Displays the list of commands\r\n", sizeof("	-> Displays the list of commands\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	set PA5 (0 or 1)\r\n", sizeof("	set PA5 (0 or 1)\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Turns the LED on or off\r\n", sizeof("	-> Turns the LED on or off\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	pinout\r\n", sizeof("	pinout\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Displays the list of used PINs and their uses\r\n", sizeof("	-> Displays the list of used PINs and their uses\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	start\r\n", sizeof("	start\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Starts the generation of PWMs\r\n", sizeof("	-> Starts the generation of PWMs\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	stop\r\n", sizeof("	stop\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Stops the generation of PWMs\r\n", sizeof("	-> Stops the generation of PWMs\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	alpha [0;1]\r\n", sizeof("	alpha [0;1]\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Changes the value of the Alpha duty cycle between 0 and 1\r\n", sizeof("	-> Changes the value of the Alpha duty cycle between 0 and 1\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	isoreset\r\n", sizeof("	isoreset\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Reset the system\r\n", sizeof("	-> Reset the system\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	speed = XXXX\r\n", sizeof("	speed = XXXX\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	-> Set the speed at XXXX [-3000;3000] RPM\r\n", sizeof("	-> Set the speed at XXXX [-3000;3000] RPM\r\n"), HAL_MAX_DELAY);
+}
 ```
-expliquation
-<br><br>
+Lorsque les caractères UART reçus sont __"help"__, Le microcontroleur renvoie les différentes commandes à l'aide le la fonction __HAL__ associée. Lenvoi de chaque commande se fait en deux parties :
+* Le nom de la commande et sa syntaxe
+* Sa description et son utilisation
+
+<br>
 
 * pinout
   - Renvoie la liste des broches utilisée ainsi que leur fonctionnalité
 ```
-code
+else if(strcmp(argv[0],pinoutCMD)==0)
+{
+ HAL_UART_Transmit(&huart2, "list of PINs used :\r\n", sizeof("list of PINs used :\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PA5  : Switch on/off the LED\r\n", sizeof("	PA5  : Switch on/off the LED\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PA8  : PWM 1\r\n", sizeof("	PA8  : PWM 1\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PA9  : PWM 2\r\n", sizeof("	PA9  : PWM 2\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PA11 : PWM 1N\r\n", sizeof("	PA11 : PWM 1N\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PA12 : PWM 2N\r\n", sizeof("	PA12 : PWM 2N\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PC3  : IsoReset\r\n", sizeof("	PC3  : IsoReset\r\n"), HAL_MAX_DELAY);
+ HAL_UART_Transmit(&huart2, "	PA1  : Current measurement (ADC)\r\n", sizeof("	PC3  : Current measurement (ADC)\r\n"), HAL_MAX_DELAY);
+}
 ```
-expliquation
+Lorsque les caractères UART reçus sont __"pinout"__, Le microcontroleur renvoie les différents noms de broches et leur utilisation.
 <br><br>
 
 * start
   - Génère les PWM de commande avec un rapport cyclique de 50% (0RPM)
 ```
-code
+else if(strcmp(argv[0],startCMD)==0)
+{
+ Status = 0;
+ PWMStartStop();
+ HAL_UART_Transmit(&huart2, "The PWMs have been generated\r\n", sizeof("The PWMs have been generated\r\n"), HAL_MAX_DELAY);
+}
 ```
-expliquation
+Lorsque les caractères UART reçus sont __"start"__, le __stauts__ est forcé à __0__ la fonction d'initialisation des __PWM__ est appelée. Le microcontroleur renvoie par __UART__ la confiramtion du démarrage.
 <br><br>
 
 * stop
   - Arrête les PWM, ce qui éteint le moteur
 ```
-code
+else if(strcmp(argv[0],stopCMD)==0)
+{
+ Status = 1;
+ PWMStartStop();
+ HAL_UART_Transmit(&huart2, "The PWMs have been stopped\r\n", sizeof("The PWMs have been stopped\r\n"), HAL_MAX_DELAY);
+}
 ```
-expliquation
+Lorsque les caractères UART reçus sont __"stop"__, le __stauts__ est forcé à __1__ et la fonction d'initialisation des __PWM__ est appelée. Le microcontroleur renvoie par __UART__ la confiramtion de l'arrêt.
 <br><br>
 
 * alpha [0;100]
   - Change le rapport cyclique des PWM
 ```
-code
+else if(strcmp(argv[0],alphaCMD)==0)
+{
+ CCRAlpha(atoi(argv[1]));
+}
 ```
-expliquation
+Lorsque les caractères __UART__ reçus sont __"alpha"__ ainsi qu'une valeur numérique, la fonction de modification du rapport cyclique est appelée et modifie la valeur _alpha_ en fonction de la valeur numérique reçue. 
 <br><br>
 
 * isoreset
-  - Remet à 0 le driver, pour permettre son démarrage
+  - Initialise le driver, pour permettre son démarrage
 ```
-code
+else if(strcmp(argv[0],IsoReset)==0)
+{
+ HAL_UART_Transmit(&huart2, "IsoReset in progress!\r\n", sizeof("IsoReset in progress!\r\n"), HAL_MAX_DELAY);
+ HAL_GPIO_WritePin(ISO_RESET_GPIO_Port, ISO_RESET_Pin, 1);
+ HAL_Delay(1);
+ HAL_GPIO_WritePin(ISO_RESET_GPIO_Port, ISO_RESET_Pin, 0);
+ HAL_UART_Transmit(&huart2, "IsoReset done!\r\n", sizeof("IsoReset done!\r\n"), HAL_MAX_DELAY);
+}
 ```
-expliquation
+Lorsque les caractères __UART__ reçus sont __"isoreset"__, la séquence d'initialisation du driver est générée et un message confirmant la fin de la séquence est transmmis par __UART__.
 <br><br>
 
 * speed [-3000;3000]
   - Change la vitesse de rotation du moteur
 ```
-code
+else if(strcmp(argv[0],SpeedCMD)==0)
+{
+ int speed = atoi(argv[1]);
+ if (speed > 0)
+ {
+	if (speed > 3000)
+	{
+	 speed = 3000;
+	}
+ }
+ if (speed < 0)
+ {
+	if (speed < -3000)
+	{
+	 speed = -3000;
+	}
+ }
+ sprintf(uartTxBuffer,"Speed will be set to %d RPM \r\n",speed);
+ HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
+ HAL_Delay(10);
+ int NewAlpha = ConvAlpha(speed);
+ sprintf(uartTxBuffer,"Alpha = %d\r\n",NewAlpha);
+ HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
+}
 ```
-expliquation
+Lorsque les caractères __UART__ reçus sont __"speed"__ ainsi qu'une valeur numérique, la validité de la valeur est vérifiée et la valeur _alha_ équivalente est calculée. La nouvelle valeur d'_alpha_ est renvoyée par __UART__. 
 <br>
 
 ## 3. Commande du moteur

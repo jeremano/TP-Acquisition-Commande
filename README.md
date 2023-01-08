@@ -290,7 +290,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 ## 5. Mesure de la vitesse
 La mesure de vitesse s'effectue avec le retour d'une roue codeuse. La roue codeuse donne la position, qui est plus précise que la vitesse, et de laquelle nous déduirons la vitesse.
-* Principe roue codeuse
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Codeur-rotatif.jpg)
+
+L'ordre des fronts présents sur les deux broches permettent de déterminer le sens de rotation.
 
 ___
 
@@ -298,20 +301,33 @@ On utilise 2 horloges :
 * En mode lecteur incrémental qui compte le nombre de fronts envoyés par la roue codeuse
 * En mode interruption qui permet de vérifier la concordance entre la valeur mesurée de la position et la valeur estimée, à une fréquence régulière
 
-* Config TIM2
-* Explication
-* Config TIM3
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2-config.png)
+
+Le registre ARR est laissé au maximum pour permettre le comptage des fronts sur la plus grande plage possible.
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM3.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM3-config.png)
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM3-NVIC.png)
+
 * Explication
 ```
-Code init
+HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+HAL_TIM_Base_Start_IT(&htim3);
 ```
 
 ___
 
 * théorie calcul vitesse
+
 ```
-Code calcul vitesse
+void TIMIRQ(void)
+{
+ HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
+ HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
+ Ticks = ((((TIM2->CNT)-32767)/0.05)/4096);
+ TIM2->CNT = 32767;
+}
 ```
+
 * Expliquation
 <br>
 
@@ -322,27 +338,3 @@ Code calcul vitesse
 Appui bouton bleu
 
 ## 8. Conclusion
-
-## Prise en main du moteur
-Les caractéristiques du moteur :
-* 3000 RPM nominal
-* 48 V
-* 6 A nominal
-
-Data :
-
-  -Clock speed : 170 MHz
-  -Counter période : 5325
-  -CCR1,CCR2 2663 (alpha = 50%)
-  -Dead Time : 205
-
-How to use it :
-
-  Connect pins PA8,9,11,12 to the Microchip's power module. (PWM)
-  Connect pin PC3 to pin 33 of the Microchip's power module. (Iso_Reset)
-  Powering the Microchip's power module.
-  Use the "isoreset" (shell) command to unlock the Microchip's power module.
-  Use the "start" command to start generating PWMs.
-  Use the "alpha" command to change the alpha value of PWMs.
-  Use the "stop" command to stop the generation of PWMs.
-  Use the "speed" command to set a specific speed.

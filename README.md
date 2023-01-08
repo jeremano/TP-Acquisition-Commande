@@ -257,17 +257,34 @@ void PWMStartStop(void)
 <br>
 
 ## 4. Mesure du courant
-* Config ADC
-* Config DMA
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/ADC-Config.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/DMA-Config.png)
 ```
-Code init
+if(HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED)!=HAL_OK)
+{
+ Error_Handler();
+}
+if(HAL_ADC_Start_DMA(&hadc2, DAT, NbMoy)!=HAL_OK)
+{
+ Error_Handler();
+}
 ```
 
 ___
 
-* Explication calcul moyenne
+La mesure du courant étant faite lorsque le timer 1 atteint les extremums, et que ces extemums sont placés au milieu des des alternances hautes et basses des PWM, la mesure de l'ADC est faite hors des périodes de transition et pile au milieu de la pente de courant. Ceci permet d'avoir une seule valeur à mesurer par période, et que celle-ci soit exactement la valeur moyenne du courant envoyée dans le bras de pont.
 ```
-Code calcul moyenne
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+ NbConv++;
+ float CMoy = 0;
+ for (int i = 0; i < NbMoy; ++i) 
+ {
+  CMoy = CMoy + (float)DAT[i];
+ }
+ CMoy = CMoy/NbMoy;
+ courant = ((CMoy-3100)/4096)*(12*3.3)-0.3;
+}
 ```
 <br>
 

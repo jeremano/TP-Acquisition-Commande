@@ -219,12 +219,38 @@ Quand le moteur est à l'arrêt, il reçoit du courant positif et négatif en co
 ___
 
 Pour générer la commande, nous utilisons le timer 1 avec la configuration suivante :
-* Screen config
-* Screen paramètres
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Mode.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-PWM.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Counter-settings.png)
+
+* Explications Counter period et PWM pulse
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Dead-Time.png)
 * Explications (calcul du temps mort)
+<br>
+
 ```
-code init
+void PWMStartStop(void)
+{
+ if(Status == 0)
+ {
+  CCRAlpha(50);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+  Status = 1;
+ }
+ else
+ {
+  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+  HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+  Status = 0;
+ }
+}
 ```
+
 * Screen oscillo PWM
 * Screen oscillo temps mort
 * image branchements

@@ -171,17 +171,18 @@ else if(strcmp(argv[0],SpeedCMD)==0)
  HAL_UART_Transmit(&huart2, uartTxBuffer, 64, HAL_MAX_DELAY);
 }
 ```
-Lorsque les caractères __UART__ reçus sont __"speed"__ ainsi qu'une valeur numérique, la validité de la valeur est vérifiée et la valeur _alha_ équivalente est calculée. La nouvelle valeur d'_alpha_ est renvoyée par __UART__. 
+Lorsque les caractères __UART__ reçus sont __"speed"__ ainsi qu'une valeur numérique, la validité de la valeur est vérifiée et la valeur _alpha_ équivalente est calculée. La nouvelle valeur d'_alpha_ est renvoyée par __UART__. 
 <br>
 
 ## 3. Commande du moteur
-Nous allons tout d'abord générer des PWM pour créer la commande complémentaire, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.
+Nous allons tout d'abord générer des PWM pour créer la commande, afin de faire tourner le moteur dans les deux sens et à une vitesse variable.
 <br>
 
 Le cahier des charges nous impose les configurations suivantes :
 * Fréquence de la PWM : 16kHz
 * Temps mort minimum : 2us
 * Résolution minimum : 10bits
+* Commande complémentaire décalée
 
 ___
 

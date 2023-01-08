@@ -42,6 +42,19 @@ La console UART doit répondre aux critères suivants :
 
 ___
 
+Les caractères qui servent de comparaison sont enregistrés en variables globales, et les fonctions _else if_ servent d'aiguillage en comparant les caractères reçu aux caractères préenregistrés.
+```
+uint8_t helpCMD[] = "help";
+uint8_t pinoutCMD[] = "pinout";
+uint8_t startCMD[] = "start";
+uint8_t stopCMD[] = "stop";
+uint8_t alphaCMD[] = "alpha";
+uint8_t IsoReset[] = "isoreset";
+uint8_t SpeedCMD[] = "speed";
+```
+
+___
+
 Les fonctions codées :
 * help
   - Renvoie la liste des commandes disponibles
@@ -172,6 +185,7 @@ else if(strcmp(argv[0],SpeedCMD)==0)
 }
 ```
 Lorsque les caractères __UART__ reçus sont __"speed"__ ainsi qu'une valeur numérique, la validité de la valeur est vérifiée et la valeur _alpha_ équivalente est calculée. La nouvelle valeur d'_alpha_ est renvoyée par __UART__. 
+
 <br>
 
 ## 3. Commande du moteur
@@ -188,8 +202,17 @@ ___
 
 La complémentaire décallée permeet d'obtenir une tension auw bornes du moteur qui n'est que positive ou négative, contrairement à la commande complémentaire basique qui crée une alternance positive négative qui crée un appel de courant inutile et freine le moteur. 
 
-* Image commande simple
-* Image complémentaire décallée
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Commande-Complémentaire.jpg)
+<p align="center">
+Commande Complémentaire Simple
+</p>
+<br><br>
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Commande-Compl%C3%A9mentaire-D%C3%A9cal%C3%A9e.jpg)
+<p align="center">
+Commande Complémentaire Décalée
+</p>
+<br><br>
 
 Quand le moteur est à l'arrêt, il reçoit du courant positif et négatif en complémentaire simple. En complémentaire, le moteur est à l'arrêt et ne reçoit pas de tension.
 

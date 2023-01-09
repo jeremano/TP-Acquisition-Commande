@@ -47,8 +47,10 @@
 // DEL = delete
 #define ASCII_DEL 0x7F
 
-#define	NbMoy 100
+#define	NbMoy 1
 
+#define Kcurrent 10
+#define Icurrent 0.127
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -89,9 +91,9 @@ uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
 uint8_t Status;
 uint16_t DAT[NbMoy];
-float courant = 0;
+float courant[2] = {0};
 float Ticks = 0;
-
+float AlphaPrecedent = 50;
 extern DMAConvTerm;
 /* USER CODE END PV */
 
@@ -101,6 +103,7 @@ void SystemClock_Config(void);
 int ConvAlpha(int vitesse);
 void CCRAlpha(int alpha);
 void TIMIRQ(void);
+void AsservCourant(float Iconsigne);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -122,7 +125,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		CMoy = CMoy + (float)DAT[i];
 	}
 	CMoy = CMoy/NbMoy;
-	courant = ((CMoy-3100)/4096)*(12*3.3)-0.3;
+	courant[0] = ((CMoy-3100.0)/4096.0)*(12.0*3.3)-0.3;
+	/*AsservCourant(1.5);*/
 }
 
 void CCRAlpha(int alpha){
@@ -159,6 +163,23 @@ void TIMIRQ(void)
 	Ticks = ((((TIM2->CNT)-32767)/0.05)/4096);
 	TIM2->CNT = 32767;
 }
+
+void AsservCourant(float Iconsigne){
+	float Delta = Iconsigne-courant[0];
+	float AlphaCorrige = Kcurrent*Delta + Icurrent*(AlphaPrecedent + Delta);
+	if (AlphaCorrige > 100){
+		AlphaCorrige = 100;
+	}
+	else if (AlphaCorrige < -100){
+		AlphaCorrige = -100;
+	}
+	else{
+		AlphaPrecedent = AlphaCorrige;
+	}
+	NosVal.Alpha = AlphaCorrige ;
+	CCRAlpha(NosVal.Alpha);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -372,7 +393,7 @@ int main(void)
 				sprintf(uartTxBuffer,"Nb DMA = %0.3d",NbConv);
 				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof("Nb DMA = 123"), HAL_MAX_DELAY);
 				HAL_UART_Transmit(&huart2, "\r\n", sizeof("\r\n"), HAL_MAX_DELAY);
-				sprintf(uartTxBuffer,"Courant = %0.4f",courant);
+				sprintf(uartTxBuffer,"Courant = %0.4f",courant[0]);
 				HAL_UART_Transmit(&huart2, uartTxBuffer, sizeof("Courant = 12345\r\n"), HAL_MAX_DELAY);
 				HAL_UART_Transmit(&huart2, "\r\n", sizeof("\r\n"), HAL_MAX_DELAY);
 				sprintf(uartTxBuffer,"RoueTour = %f",Ticks);

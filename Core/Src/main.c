@@ -80,13 +80,16 @@ uint8_t cmdNotFound[]="Command not found\r\n";
 uint32_t uartRxReceived;
 uint8_t uartRxBuffer[UART_RX_BUFFER_SIZE];
 uint8_t uartTxBuffer[UART_TX_BUFFER_SIZE];
+
 // Tableaux comparatifs des commandes
+
 uint8_t helpCMD[] = "help";
 uint8_t pinoutCMD[] = "pinout";
 uint8_t startCMD[] = "start";
 uint8_t stopCMD[] = "stop";
 uint8_t alphaCMD[] = "alpha";
 uint8_t IsoReset[] = "isoreset";
+uint8_t SpeedCMD[] = "speed";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
 uint8_t Status;
@@ -364,7 +367,7 @@ int main(void)
 				HAL_GPIO_WritePin(ISO_RESET_GPIO_Port, ISO_RESET_Pin, 0);
 				HAL_UART_Transmit(&huart2, "IsoReset done!\r\n", sizeof("IsoReset done!\r\n"), HAL_MAX_DELAY);
 			}
-			else if(strcmp(argv[0],"speed")==0)
+			else if(strcmp(argv[0],SpeedCMD)==0)
 			{
 				int speed = atoi(argv[1]);
 				if (speed > 0)

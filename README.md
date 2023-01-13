@@ -1,11 +1,12 @@
-# TP-Acquisition-Commande <br>
-
+# TP-Acquisition-Commande 
+<br>
 
 ![GitHub language count](https://img.shields.io/github/languages/count/jeremano/TP-Acquisition-Commande?style=flat-square) 
 ![GitHub top language](https://img.shields.io/github/languages/top/jeremano/TP-Acquisition-Commande?color=blue&style=flat-square) 
-<br>
+<br><br>
 
-![GitHub contributors](https://img.shields.io/github/contributors/jeremano/TP-Acquisition-Commande?style=flat-square) _Boudet - Manologlou_
+![GitHub contributors](https://img.shields.io/github/contributors/jeremano/TP-Acquisition-Commande?style=flat-square)<br>
+[_Anthony BOUDET_](https://github.com/AnthonyBOUDET) - [_Jeremy MANOLOGLOU_](https://github.com/jeremano)
 ## Sommaire
 [1. Objectifs](#1-objectifs)
 
@@ -220,7 +221,9 @@ ___
 
 Pour générer la commande, nous utilisons le timer 1 avec la configuration suivante :
 
-![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Mode.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-PWM.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Counter-settings.png)
+<p align="center">
+<img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Mode.png" width="300" /> <img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-PWM.png" width="275" /> <img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Counter-settings.png" width="375" />
+</p>
 
 * Explications Counter period et PWM pulse
 
@@ -251,8 +254,23 @@ void PWMStartStop(void)
 }
 ```
 
-* Screen oscillo PWM
-* Screen oscillo temps mort
+<br>
+
+<p align="center">
+<img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Screen-PWM.png" "width=500" /><br>
+<i>
+Visualisation des Signaux Générés
+</i>
+</p>
+<br>
+
+<p align="center">
+<img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Screen-temps-mort.png" /><br>
+<i>
+Visualisation du Temps Mort
+</i>
+</p>
+
 * image branchements
 <br>
 
@@ -291,7 +309,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 ## 5. Mesure de la vitesse
 La mesure de vitesse s'effectue avec le retour d'une roue codeuse. La roue codeuse donne la position, qui est plus précise que la vitesse, et de laquelle nous déduirons la vitesse.
 
-![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Codeur-rotatif.jpg)
+<p align="center">
+<img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Codeur-rotatif.jpg" /><br>
+<i>
+Fonctionnement Encodeur Rotatif
+</i>
+</p>
 
 L'ordre des fronts présents sur les deux broches permettent de déterminer le sens de rotation.
 

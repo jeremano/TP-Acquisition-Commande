@@ -229,6 +229,13 @@ Pour générer la commande, nous utilisons le timer 1 avec la configuration suiv
 
 ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Dead-Time.png)
 * Explications (calcul du temps mort)
+
+On souhaite un temps mort d'au moins 2µs. En effectuant les calculs avec DTG[7:0] = 1100101 = 203 on obtient :
+DTG[7:5] = 110 donc DT = (32 + DTG[4:0])x8Tdts avec DTG[4:0] = 01011
+Le timer 1 étant cadensé à 170 MHz, on a Tdts = 1/(170E-9)= 5.9ns
+Donc DT = (32 + 11)x8Tdts = 2.02 µs
+DTG doit donc avoir une valeur décimal supérieur ou égale à 203.
+On a donc choisi un DTG égale a 205 pour avoir une marge de sécurité en plus.
 <br>
 
 ```

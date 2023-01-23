@@ -362,6 +362,28 @@ void TIMIRQ(void)
 <br>
 
 ## 6. Asservissement
+
+	Pour notre moteur nous avons eu besoin de réaliser deux asservissement en cascade. Tout d'abord, nous avons eu besoin de réaliser un asservissement en courant qui est obligatoire si nous voulons protéger notre moteur de potentielles surintensités. Cet asservissement devra par la suite être couplé à un asservissement en Vitesse qui correspondra à la consigne initiale du moteur. 
+	
+	L'objectif est donc de fournir une consigne en vitesse au moteur, que le moteur atteigne cette vitesse le plus rapidement possible tout en restant dans les limites d'utilisations du moteur en terme d'intensité.
+	
+	Image asservissement global
+	
+	Ces deux asservissements sont composées de saturateurs et de correcteurs de type Propotionnel Intégral (PI). 
+	
+	Image Correcteur PI définition
+	
+	Ces deux correcteurs possèdent des paramètre K et Ki qui peuvent être directement déterminer grâce à une simulation sur MatLab. Une fois ces paramètres déterminés, nous pouvons nous occupé de l'intégration de ceux-ci dans notre code. Mais pour cela nous devons utilisé la transformée en Z pour passé du domaine de la place en indiciel pour déterminer l'équation de récurrence régissant la variable de sortie S
+	
+	Image Calcul Correcteur PI
+	
+	En intégrant notre correcteur PI, pour notre asservissement en courant, dans notre code, nous avons pu effectuer quelques tests afin de vérifier si la commande en courant était belle est bien respectée, et surtout qu'il n'y ait aucun dépassement. Pour cela, nous avons rajouter un effet d'anti-Windup afin d'arrêter d'intégrer quand la différence entre la consigne et la sortie est négative. Ce qui permet à l'intégrateur de ne pas générer de dépassement.
+	
+	Image Code Asserv avec Anti-Windup
+	
+	Image Oscilloscope Asserv Courant
+	
+	Malheureusement nous n'avons pas eu le temps d'aller plus loin et donc nous n'avons pas pu réaliser l'asservissement en vitesse.
 <br>
 
 ## 7. Fonctionnalitées supplémentaires

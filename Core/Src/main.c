@@ -47,10 +47,10 @@
 // DEL = delete
 #define ASCII_DEL 0x7F
 
-#define	NbMoy 1
+#define	ADC_BUFFER_SIZE 1
 
-#define Kcurrent 10
-#define Icurrent 0.127
+#define CURRENT_GAIN_K 10
+#define CURRENT_GAIN_I 0.127
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -61,14 +61,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 struct Valeurs
 {
 	int Vitesse;
 	int Alpha;
 	int Courant;
-	int ErreurAngle;
+	int Err_Angle;
 };
-struct Valeurs NosVal;
+struct Valeurs VAL_STRUCT;
+
 uint8_t prompt[]="user@Nucleo-STM32G431>>";
 uint8_t started[]=
 		"\r\n*-----------------------------*"
@@ -93,56 +95,59 @@ uint8_t SpeedCMD[] = "speed";
 uint8_t ADC[] = "ADC";
 uint8_t NbConv = 0;
 uint8_t Status;
-uint16_t DAT[NbMoy];
+uint16_t DAT[ADC_BUFFER_SIZE];
+
 float courant[2] = {0};
 float Ticks = 0;
-float AlphaPrecedent = 50;
-extern DMAConvTerm;
+float PREC_ALPHA = 50;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
 int ConvAlpha(int vitesse);
 void CCRAlpha(int alpha);
 void TIMIRQ(void);
-void AsservCourant(float Iconsigne);
+void AsservCourant(float Consigne);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int ConvAlpha(int vitesse){
+
+int ConvAlpha(int vitesse)	//Speed to Alpha conversion and send for modification of CCR
+{
 	int ValAlpha = ((vitesse + 3000)/60);
 	CCRAlpha(ValAlpha);
 	return ValAlpha;
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)	//Calculate current mean and send it to PI Corrector each DMA interrupt
 {
 	NbConv++;
-	/*HAL_ADC_GetValue(&hadc1);
-	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);
-	HAL_GPIO_TogglePin(Conv_GPIO_Port, Conv_Pin);*/
 	float CMoy = 0;
-	for (int i = 0; i < NbMoy; ++i) {
+	for (int i = 0; i < ADC_BUFFER_SIZE; ++i) {
 		CMoy = CMoy + (float)DAT[i];
 	}
-	CMoy = CMoy/NbMoy;
+	CMoy = CMoy/ADC_BUFFER_SIZE;
 	courant[0] = ((CMoy-3100.0)/4096.0)*(12.0*3.3)-0.3;
-	/*AsservCourant(1.5);*/
+	AsservCourant(courant[0]);
 }
 
-void CCRAlpha(int alpha){
+void CCRAlpha(int alpha)	//Modification of CCR
+{
 	 TIM1->CCR1 = (int)((5325*alpha)/100);
 	 TIM1->CCR2 = (int)((5325*(100 - alpha)/100));
 	 TIM1->CNT=0;
 }
 
-void PWMStartStop(void)
+void PWMStartStop(void)	//Start or Stop PWM generation depending on actual state
 {
 	if(Status == 0)
 	{
-		CCRAlpha(50);
+		ConvAlpha(0);
 		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 		HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
@@ -159,7 +164,7 @@ void PWMStartStop(void)
 	}
 }
 
-void TIMIRQ(void)
+void TIMIRQ(void)	//Calculate position and number of turns every interrupt on TIM3
 {
 	HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
 	HAL_GPIO_TogglePin(Rotary_GPIO_Port, Rotary_Pin);
@@ -167,9 +172,10 @@ void TIMIRQ(void)
 	TIM2->CNT = 32767;
 }
 
-void AsservCourant(float Iconsigne){
-	float Delta = Iconsigne-courant[0];
-	float AlphaCorrige = Kcurrent*Delta + Icurrent*(AlphaPrecedent + Delta);
+void AsservCourant(float Consigne)	//Correct the alpha value depending on current error
+{
+	float Error = Consigne-courant[0];
+	float AlphaCorrige = CURRENT_GAIN_K*Error + CURRENT_GAIN_I*(PREC_ALPHA + Error);
 	if (AlphaCorrige > 100){
 		AlphaCorrige = 100;
 	}
@@ -177,10 +183,10 @@ void AsservCourant(float Iconsigne){
 		AlphaCorrige = -100;
 	}
 	else{
-		AlphaPrecedent = AlphaCorrige;
+		PREC_ALPHA = AlphaCorrige;
 	}
-	NosVal.Alpha = AlphaCorrige ;
-	CCRAlpha(NosVal.Alpha);
+	VAL_STRUCT.Alpha = AlphaCorrige ;
+	CCRAlpha(VAL_STRUCT.Alpha);
 }
 
 /* USER CODE END 0 */
@@ -243,7 +249,7 @@ int main(void)
 		Error_Handler();
 	}
 
-	if(HAL_ADC_Start_DMA(&hadc2, DAT, NbMoy)!=HAL_OK)
+	if(HAL_ADC_Start_DMA(&hadc2, DAT, ADC_BUFFER_SIZE)!=HAL_OK)
 	{
 		Error_Handler();
 	}

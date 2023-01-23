@@ -41,7 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-int DMAConvTerm = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

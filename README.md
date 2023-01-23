@@ -225,10 +225,7 @@ Pour générer la commande, nous utilisons le timer 1 avec la configuration suiv
 <img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Mode.png" width="300" /> <img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-PWM.png" width="275" /> <img src="https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Counter-settings.png" width="375" />
 </p>
 
-* Explications Counter period et PWM pulse
-
 ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM1-Dead-Time.png)
-* Explications (calcul du temps mort)
 
 On souhaite un temps mort d'au moins 2µs. En effectuant les calculs avec DTG[7:0] = 1100101 = 203 on obtient :
 DTG[7:5] = 110 donc DT = (32 + DTG[4:0])x8Tdts avec DTG[4:0] = 01011
@@ -277,8 +274,6 @@ Visualisation des Signaux Générés
 Visualisation du Temps Mort
 </i>
 </p>
-
-* image branchements
 <br>
 
 ## 4. Mesure du courant
@@ -338,15 +333,12 @@ Le registre ARR est laissé au maximum pour permettre le comptage des fronts sur
 ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM3.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM3-config.png)
 ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM3-NVIC.png)
 
-* Explication
 ```
 HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 HAL_TIM_Base_Start_IT(&htim3);
 ```
 
 ___
-
-* théorie calcul vitesse
 
 ```
 void TIMIRQ(void)
@@ -357,36 +349,41 @@ void TIMIRQ(void)
  TIM2->CNT = 32767;
 }
 ```
-
-* Expliquation
 <br>
 
 ## 6. Asservissement
 
-	Pour notre moteur nous avons eu besoin de réaliser deux asservissement en cascade. Tout d'abord, nous avons eu besoin de réaliser un asservissement en courant qui est obligatoire si nous voulons protéger notre moteur de potentielles surintensités. Cet asservissement devra par la suite être couplé à un asservissement en Vitesse qui correspondra à la consigne initiale du moteur. 
+Pour notre moteur nous avons eu besoin de réaliser deux asservissement en cascade. Tout d'abord, nous avons eu besoin de réaliser un asservissement en courant qui est obligatoire si nous voulons protéger notre moteur de potentielles surintensités. Cet asservissement devra par la suite être couplé à un asservissement en Vitesse qui correspondra à la consigne initiale du moteur. 
 	
-	L'objectif est donc de fournir une consigne en vitesse au moteur, que le moteur atteigne cette vitesse le plus rapidement possible tout en restant dans les limites d'utilisations du moteur en terme d'intensité.
+L'objectif est donc de fournir une consigne en vitesse au moteur, que le moteur atteigne cette vitesse le plus rapidement possible tout en restant dans les limites d'utilisations du moteur en terme d'intensité.
 	
-	Image asservissement global
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Asservissement-Global.png)
 	
-	Ces deux asservissements sont composées de saturateurs et de correcteurs de type Propotionnel Intégral (PI). 
+Ces deux asservissements sont composées de saturateurs et de correcteurs de type Propotionnel Intégral (PI). 
 	
-	Image Correcteur PI définition
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Correcteur-PI.png)
 	
-	Ces deux correcteurs possèdent des paramètre K et Ki qui peuvent être directement déterminer grâce à une simulation sur MatLab. Une fois ces paramètres déterminés, nous pouvons nous occupé de l'intégration de ceux-ci dans notre code. Mais pour cela nous devons utilisé la transformée en Z pour passé du domaine de la place en indiciel pour déterminer l'équation de récurrence régissant la variable de sortie S
+Ces deux correcteurs possèdent des paramètre K et Ki qui peuvent être directement déterminer grâce à une simulation sur MatLab. Une fois ces paramètres déterminés, nous pouvons nous occupé de l'intégration de ceux-ci dans notre code. Mais pour cela nous devons utilisé la transformée en Z pour passé du domaine de la place en indiciel pour déterminer l'équation de récurrence régissant la variable de sortie S
 	
-	Image Calcul Correcteur PI
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Calcul-Correcteur.jpg)
 	
-	En intégrant notre correcteur PI, pour notre asservissement en courant, dans notre code, nous avons pu effectuer quelques tests afin de vérifier si la commande en courant était belle est bien respectée, et surtout qu'il n'y ait aucun dépassement. Pour cela, nous avons rajouter un effet d'anti-Windup afin d'arrêter d'intégrer quand la différence entre la consigne et la sortie est négative. Ce qui permet à l'intégrateur de ne pas générer de dépassement.
+En intégrant notre correcteur PI, pour notre asservissement en courant, dans notre code, nous avons pu effectuer quelques tests afin de vérifier si la commande en courant était belle est bien respectée, et surtout qu'il n'y ait aucun dépassement. Pour cela, nous avons rajouter un effet d'anti-Windup afin d'arrêter d'intégrer quand la différence entre la consigne et la sortie est négative. Ce qui permet à l'intégrateur de ne pas générer de dépassement.
 	
-	Image Code Asserv avec Anti-Windup
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/Code-Asserv-Anti-Windup-(légende).png)
+		
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/tek00007.png)
+
+![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/TIM2.png) ![alt text](https://github.com/jeremano/TP-Acquisition-Commande/blob/main/Medias/tek00004.png)
 	
-	Image Oscilloscope Asserv Courant
-	
-	Malheureusement nous n'avons pas eu le temps d'aller plus loin et donc nous n'avons pas pu réaliser l'asservissement en vitesse.
+Malheureusement nous n'avons pas eu le temps d'aller plus loin et donc nous n'avons pas pu réaliser l'asservissement en vitesse.
 <br>
 
 ## 7. Fonctionnalitées supplémentaires
-Appui bouton bleu
+
+Pour simplifier l'utilisation du système, nous avons programmé le bouton bleu pour démarrer les PWM avec un rapport cyclique de 50%. Mais nous avons aussi ajouté la possibilité d'éteindre les PWM avec ce même bouton, lorsque celles-ci sont déjà lancées!
+<br>
 
 ## 8. Conclusion
+
+Durant ces séances, nous avons pu apprendre à utiliser une STM32 afin de piloter un moteur et son driver. Nous avons aussi expérimenté l'asservissement en courant et vu beaucoup de nouvelles fonctionnalités.<br>
+Malheureusement nous nous sommes heurtés à certaines difficultées, telles que le disfonctionnement de l'ADC sur certaines cartes. Cela nous a empéchés d'aller jusqu'au bout du sujet. Cependant, la partie étudiée (la grande majorité du sujet) à été bien comprise grâce à la tournure ludique du projet!
